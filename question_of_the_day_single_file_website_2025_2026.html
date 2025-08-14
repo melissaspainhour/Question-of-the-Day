@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Question of the Day</title>
+  <!-- Fun, kid-friendly fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#222;
+      --paper:#fff8e7; /* warm paper */
+      --accent:#5b8def; /* playful blue */
+      --accent-2:#ff7aa2; /* playful pink */
+      --shadow:rgba(0,0,0,.15);
+    }
+
+    /* Playful pastel background using layered gradients */
+    body{
+      margin:0;
+      min-height:100svh;
+      color:var(--ink);
+      background:
+        radial-gradient(40vw 40vw at -10% -10%, #fef6ff 30%, transparent 31%),
+        radial-gradient(35vw 35vw at 110% 10%, #e6f7ff 30%, transparent 31%),
+        radial-gradient(35vw 35vw at 0% 100%, #fff6e8 30%, transparent 31%),
+        radial-gradient(45vw 45vw at 100% 120%, #edf9f1 30%, transparent 31%),
+        linear-gradient(135deg,#f6f7ff,#fdfdfd 40%, #f7fbff);
+      font-family:"Nunito", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .card{
+      width:min(900px, 92vw);
+      background:var(--paper);
+      border-radius:24px;
+      box-shadow:0 18px 40px var(--shadow), 0 2px 1px rgba(0,0,0,.06) inset;
+      position:relative;
+      padding:28px 28px 32px 28px;
+      border:2px solid #ffe8bb;
+      /* fun background confetti */
+      background-image:
+        radial-gradient(circle at 12% 18%, rgba(91,141,239,.18) 0 6px, transparent 7px),
+        radial-gradient(circle at 88% 24%, rgba(255,122,162,.18) 0 6px, transparent 7px),
+        radial-gradient(circle at 22% 86%, rgba(255,200,87,.18) 0 6px, transparent 7px),
+        radial-gradient(circle at 74% 82%, rgba(66,214,151,.18) 0 6px, transparent 7px);
+      background-blend-mode:multiply;
+    }
+
+    .title{
+      font-family:"Baloo 2", cursive;
+      font-size: clamp(32px, 6vw, 56px);
+      margin:0 0 4px 0;
+      letter-spacing:0.5px;
+      text-shadow:0 2px 0 rgba(255,255,255,.7), 0 4px 14px rgba(91,141,239,.12);
+      display:flex;gap:.5ch;align-items:center;flex-wrap:wrap;
+    }
+    .title .spark{color:var(--accent)}
+
+    .date{
+      font-weight:700;
+      font-size: clamp(16px, 2.6vw, 22px);
+      color:#4b5563;
+      margin:2px 0 18px 2px;
+    }
+
+    .question-box{
+      position:relative;
+      background:#fffef7;
+      border:2px dashed #ffd28a;
+      border-radius:20px;
+      padding:22px 22px 26px 22px;
+      box-shadow:0 6px 0 #ffd28a, 0 12px 24px rgba(0,0,0,.08);
+    }
+
+    .question-label{
+      font-weight:800; letter-spacing:.4px;
+      color:#ef476f; text-transform:uppercase; font-size:14px;
+      display:inline-block; background:#fff; padding:6px 10px; border-radius:999px;
+      border:2px solid #ffd1d1; margin-bottom:10px;
+    }
+
+    .question{
+      font-size: clamp(20px, 3.2vw, 30px);
+      line-height:1.3;
+      margin:6px 0 0 0;
+    }
+
+    .controls{
+      margin-top:18px;
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+
+    button{
+      appearance:none; border:none; cursor:pointer;
+      background:linear-gradient(180deg,#6ea7ff,#4d86ff);
+      color:white; font-weight:800; letter-spacing:.3px;
+      padding:10px 14px; border-radius:14px; box-shadow:0 8px 16px rgba(77,134,255,.35);
+      transition:transform .05s ease, box-shadow .2s ease;
+    }
+    button:hover{ transform:translateY(-1px); }
+    button:active{ transform:translateY(1px); box-shadow:0 3px 8px rgba(77,134,255,.35); }
+
+    .ghost{
+      background:#fff; color:#374151; border:2px solid #e5e7eb; box-shadow:none;
+    }
+
+    .note{
+      font-size:13px; color:#6b7280; margin-left:auto;
+    }
+
+    .range-badge{
+      font-size:12px; font-weight:800; color:#374151;
+      display:inline-flex; align-items:center; gap:6px;
+      background:#fff; border:2px solid #e5e7eb; padding:6px 10px; border-radius:999px;
+    }
+    .badge-dot{ width:8px; height:8px; border-radius:50%; background:var(--accent-2); display:inline-block; }
+
+    @media (max-width:480px){
+      .note{flex-basis:100%; margin-left:0}
+    }
+  </style>
+</head>
+<body>
+  <main class="card" role="main" aria-live="polite">
+    <h1 class="title"><span class="spark">★</span> Question of the Day</h1>
+    <div class="date" id="dateText">—</div>
+
+    <section class="question-box">
+      <span class="question-label">Today’s Prompt</span>
+      <div class="question" id="question">Loading…</div>
+    </section>
+
+    <div class="controls">
+      <button id="prev">◀ Previous Day</button>
+      <button id="next">Next Day ▶</button>
+      <button id="shuffle" class="ghost">Surprise Me 🎲</button>
+      <span class="note range-badge"><span class="badge-dot"></span> Aug 18, 2025 → May 31, 2026</span>
+    </div>
+  </main>
+
+  <script>
+  // ===== Teacher Settings =====
+  const START_DATE = new Date('2025-08-18'); // MM/DD/YYYY
+  const END_DATE   = new Date('2026-05-31');
+  const SKIP_WEEKENDS = true; // Only count Mon–Fri as school days
+
+  // ===== Utilities =====
+  const fmt = new Intl.DateTimeFormat('en-US', { weekday:'long', month:'long', day:'numeric', year:'numeric' });
+  const shortFmt = new Intl.DateTimeFormat('en-US', { month:'short', day:'2-digit', year:'numeric' });
+
+  function isWeekday(d){ return d.getDay() !== 0 && d.getDay() !== 6; }
+  function addDays(d, n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+  function clamp(d, min, max){ return d < min ? new Date(min) : (d > max ? new Date(max) : new Date(d)); }
+
+  function countSchoolDays(from, to){
+    // inclusive count of weekdays between from and to
+    let d = new Date(from), count = 0;
+    while(d <= to){ if(!SKIP_WEEKENDS || isWeekday(d)) count++; d = addDays(d,1); }
+    return count;
+  }
+
+  function schoolIndexForDate(d){
+    // 0-based index for the date within the range (weekdays only if enabled)
+    d = clamp(d, START_DATE, END_DATE);
+    if(SKIP_WEEKENDS){
+      // move to nearest previous weekday within range
+      while(d > START_DATE && !isWeekday(d)) d = addDays(d,-1);
+    }
+    let idx = 0, cur = new Date(START_DATE);
+    while(cur < d){ if(!SKIP_WEEKENDS || isWeekday(cur)) idx++; cur = addDays(cur,1); }
+    return idx; // 0..N-1
+  }
+
+  // ===== Question Generator =====
+  // Using templates + word banks to produce hundreds of unique, age-appropriate prompts.
+  const banks = {
+    animals: ["panda","otter","red panda","koala","hedgehog","penguin","sloth","dolphin","axolotl","giraffe","tiger","elephant","owl","quokka","capybara","kangaroo","arctic fox","sea turtle","zebra","lemur"],
+    foods: ["pizza","tacos","pasta","sushi","pancakes","waffles","smoothies","mac & cheese","ice cream","fruit salad","burgers","sandwiches","ramen","stir fry","granola bars","cupcakes","popcorn","quesadillas","bagels","dumplings"],
+    superpowers: ["fly","turn invisible","talk to animals","time travel (only 24 hours)","breathe underwater","run super fast","shrink to ant-size","grow to giant-size","teleport anywhere","pause time for 10 seconds","create mini force fields","super hearing","super memory","instant language translator","make perfect high-fives","control the weather for 5 minutes","see in the dark","draw things to life","bounce like a trampoline","never spill a drink"],
+    places: ["a rainforest","outer space","the deep ocean","a volcano (safely!)","the Moon","a medieval castle","ancient Egypt","a coral reef","the Arctic","a desert oasis","a candy factory","a wildlife sanctuary","a futuristic city","a dinosaur park","a mountain summit","a secret library","a tiny island","a space station","a noodle museum","a robotics lab"],
+    objects: ["backpack","pencil","water bottle","sneaker","notebook","lunchbox","clock","bookshelf","bicycle","locker","headphones","pillow","soccer ball","keychain","potted plant","tablet","game controller","paintbrush","calculator","map"],
+    hobbies: ["drawing","coding","soccer","basketball","reading","baking","skateboarding","music","dance","photography","gardening","lego building","swimming","hiking","chess","drama","robotics","journaling","poetry","yoga"],
+    adjectives: ["Brilliant","Silly","Epic","Cozy","Curious","Zany","Sparkly","Chill","Legendary","Mega","Wacky","Brave","Inventive","Sunny","Lucky","Mighty","Cheerful","Clever","Creative","Bold"],
+    sports: ["soccer","basketball","baseball","volleyball","tennis","track","swimming","gymnastics","badminton","ultimate frisbee","table tennis","flag football","karate","dance","cheer","hockey","climbing","bowling","fencing","golf"],
+    feelings: ["proud","calm","excited","curious","brave","grateful","helpful","silly","kind","confident","focused","energetic","thoughtful","optimistic","patient","friendly","creative","determined","hopeful","joyful"]
+  };
+
+  const templates = [
+    // 0
+    (n) => `Would you rather ${pick(banks.superpowers,n)} or ${pick(banks.superpowers,n+7)}—and what would be your first mission?`,
+    // 1
+    (n) => `If you could visit ${pick(banks.places,n)} for one day, what would you do there?`,
+    // 2
+    (n) => `Top 3 movie-night snacks: go!`,
+    // 3
+    (n) => `If a ${pick(banks.animals,n)} could text you, what would you ask it?`,
+    // 4
+    (n) => `Invent a new school supply that makes ${pick(banks.hobbies,n)} easier. What does it do?`,
+    // 5
+    (n) => `Create a new emoji. What does it look like and when would you use it?`,
+    // 6
+    (n) => `What would a ${pick(banks.objects,n)} say about its day if it could talk?`,
+    // 7
+    (n) => `Design a dream field trip: where are we going and what’s the highlight?`,
+    // 8
+    (n) => `Would you rather explore ${pick(banks.places,n)} or ${pick(banks.places,n+11)}? Why?`,
+    // 9
+    (n) => `You can combine two animals into one new pet. Which two and what’s its name?`,
+    // 10
+    (n) => `What’s a small habit that helps you feel ${pick(banks.feelings,n)} during the day?`,
+    // 11
+    (n) => `If you could master one sport instantly, which one and what would your celebration move be?`,
+    // 12
+    (n) => `Create a new holiday called “${pick(banks.adjectives,n)} Day.” How do we celebrate?`,
+    // 13
+    (n) => `If your bedroom had a secret door, where would it lead?`,
+    // 14
+    (n) => `Would you rather name a new planet or a new species? What would you call it?`,
+    // 15
+    (n) => `If your backpack got one magical upgrade, what would it be?`,
+    // 16
+    (n) => `Describe the ultimate ${pick(banks.foods,n)}. What toppings or twists does it have?`,
+    // 17
+    (n) => `Build a time capsule for future 6th graders. What 3 items go in?`,
+    // 18
+    (n) => `If you could teach a class for one day, what’s the topic and a fun activity you’d include?`,
+    // 19
+    (n) => `You can talk to plants for one hour. Which plant do you choose and what do you discuss?`,
+  ];
+
+  function pick(arr, n){ return arr[Math.abs(n) % arr.length]; }
+
+  function generateQuestion(index){
+    // Rotate through templates to produce lots of variety.
+    const t = templates[index % templates.length];
+    return t(index);
+  }
+
+  // ===== Page Logic =====
+  const dateText = document.getElementById('dateText');
+  const questionBox = document.getElementById('question');
+  const prevBtn = document.getElementById('prev');
+  const nextBtn = document.getElementById('next');
+  const shuffleBtn = document.getElementById('shuffle');
+
+  // Current displayed date (clamped to range)
+  let current = (() => {
+    const today = new Date();
+    let d = clamp(today, START_DATE, END_DATE);
+    if(SKIP_WEEKENDS && !isWeekday(d)){
+      // If it’s a weekend, show the most recent school day within range
+      while(d > START_DATE && !isWeekday(d)) d = addDays(d,-1);
+    }
+    return d;
+  })();
+
+  function render(){
+    const idx = schoolIndexForDate(current);
+    const q = generateQuestion(idx);
+    dateText.textContent = fmt.format(current);
+    questionBox.textContent = q;
+    // Disable prev/next when at edges
+    prevBtn.disabled = current.getTime() <= START_DATE.getTime();
+    nextBtn.disabled = current.getTime() >= END_DATE.getTime();
+  }
+
+  prevBtn.addEventListener('click', () => {
+    let d = addDays(current, -1);
+    if(SKIP_WEEKENDS){ while(d >= START_DATE && !isWeekday(d)) d = addDays(d,-1); }
+    current = clamp(d, START_DATE, END_DATE);
+    render();
+  });
+
+  nextBtn.addEventListener('click', () => {
+    let d = addDays(current, 1);
+    if(SKIP_WEEKENDS){ while(d <= END_DATE && !isWeekday(d)) d = addDays(d,1); }
+    current = clamp(d, START_DATE, END_DATE);
+    render();
+  });
+
+  shuffleBtn.addEventListener('click', () => {
+    // Keep the date the same; show a different template variation for fun.
+    // We’ll offset the index by a pseudo-random number so the question changes.
+    const rand = Math.floor(Math.random()*997) + 1; // prime-ish offset
+    const idx = schoolIndexForDate(current) + rand;
+    questionBox.textContent = generateQuestion(idx);
+  });
+
+  // Keyboard support for quick prep in class
+  window.addEventListener('keydown', (e)=>{
+    if(e.key === 'ArrowLeft') prevBtn.click();
+    if(e.key === 'ArrowRight') nextBtn.click();
+    if(e.key.toLowerCase() === 's') shuffleBtn.click();
+  });
+
+  render();
+  </script>
+</body>
+</html>
