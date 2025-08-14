@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Question of the Day</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+  }
+  h1 {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 3em;
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  h2 {
+    font-size: 1.5em;
+    color: #555;
+  }
+  .question {
+    font-size: 1.2em;
+    margin-top: 20px;
+  }
+  .buttons {
+    margin-top: 20px;
+  }
+  .buttons button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(to right, #36d1dc, #5b86e5);
+    color: white;
+  }
+  .surprise {
+    background: linear-gradient(to right, #ff9a9e, #fad0c4);
+    color: black;
+  }
+  iframe {
+    margin-top: 40px;
+    border: none;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>Question of the Day</h1>
+    <h2 id="date"></h2>
+    <div class="question" id="question"></div>
+    <div class="buttons">
+      <button onclick="prevDay()">Previous Day</button>
+      <button class="surprise" onclick="surpriseMe()">Surprise Me!</button>
+      <button onclick="nextDay()">Next Day</button>
+    </div>
+  </div>
+
+  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQXyWitz3HrCMKHJAaKigh_Ko0uTL0NsV4G2YdMbCVlwJn_mbjtU2Q7cJWXwRcOnRNTtZImZ5SsYPLZ/pubembed?start=false&loop=false&delayms=3000" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+
+  <script>
+    const questionsByDate = {
+      '2025-08-14': "What's your favorite snack for a movie night?",
+      '2025-08-15': "If you could meet any historical figure, who would it be?",
+      '2025-08-18': "If you could have any superpower for a day, what would it be?",
+      '2025-08-19': "What’s your favorite ice cream flavor?",
+      '2025-08-20': "If you could visit any planet, which one would you choose?",
+      '2025-08-21': "What’s the funniest thing that happened to you recently?",
+      '2025-08-22': "If you could be any animal for a day, what would you be?",
+      '2025-08-23': "What’s one food you could eat every day and never get tired of?"
+    };
+
+    const startDate = new Date('2025-08-14');
+    const endDate = new Date('2026-05-31');
+    let currentDate = new Date();
+
+    const dateElement = document.getElementById('date');
+    const questionElement = document.getElementById('question');
+
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    function displayQuestion() {
+      dateElement.textContent = currentDate.toDateString();
+      const key = formatDate(currentDate);
+      questionElement.textContent = questionsByDate[key] || "No question today.";
+    }
+
+    function prevDay() {
+      currentDate.setDate(currentDate.getDate() - 1);
+      displayQuestion();
+    }
+
+    function nextDay() {
+      currentDate.setDate(currentDate.getDate() + 1);
+      displayQuestion();
+    }
+
+    function surpriseMe() {
+      const keys = Object.keys(questionsByDate);
+      const randomKey = keys[Math.floor(Math.random() * keys.length)];
+      dateElement.textContent = new Date(randomKey).toDateString() + " (Surprise!)";
+      questionElement.textContent = questionsByDate[randomKey];
+    }
+
+    displayQuestion();
+  </script>
+</body>
+</html>
