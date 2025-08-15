@@ -74,7 +74,7 @@
 </head>
 <body>
   <canvas id="confetti"></canvas>
-  <audio id="confettiSound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_61c0f38d7b.mp3?filename=small-crowd-cheer-and-applause-6713.mp3"></audio>
+  <audio id="confettiSound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_61c0f38d7b.mp3?filename=small-crowd-cheer-and-applause-6713.mp3" autoplay playsinline muted></audio>
   <div class="container">
     <h1>Question of the Day</h1>
     <h2 id="date"></h2>
@@ -136,7 +136,6 @@
 
     displayQuestion();
 
-    // Confetti Animation with User Interaction Sound Trigger
     const canvas = document.getElementById('confetti');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -176,6 +175,7 @@
 
     function startConfettiWithSound() {
       const confettiSound = document.getElementById('confettiSound');
+      confettiSound.muted = false;
       confettiSound.loop = true;
       confettiSound.play().catch(err => console.log('Sound blocked until click:', err));
       let confettiInterval = setInterval(() => {
@@ -191,7 +191,7 @@
     }
 
     window.addEventListener('click', startConfettiWithSound, { once: true });
-    startConfettiWithSound(); // still try autoplay
+    startConfettiWithSound();
 
   </script>
 </body>
