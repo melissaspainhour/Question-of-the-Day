@@ -74,7 +74,7 @@
 </head>
 <body>
   <canvas id="confetti"></canvas>
-  <audio id="confettiSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_3e89b1f3a4.mp3?filename=party-horn-1-188072.mp3"></audio>
+  <audio id="confettiSound" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_61c0f38d7b.mp3?filename=small-crowd-cheer-and-applause-6713.mp3"></audio>
   <div class="container">
     <h1>Question of the Day</h1>
     <h2 id="date"></h2>
@@ -136,7 +136,7 @@
 
     displayQuestion();
 
-    // Confetti Animation with Sound
+    // Confetti Animation with Immediate Sound
     const canvas = document.getElementById('confetti');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -179,18 +179,16 @@
       updateConfetti();
     }, 30);
 
-    // Play sound (must be triggered by user interaction in many browsers)
-    window.addEventListener('click', () => {
-      const confettiSound = document.getElementById('confettiSound');
-      confettiSound.loop = true;
-      confettiSound.play();
-      setTimeout(() => {
-        confettiSound.pause();
-        confettiSound.currentTime = 0;
-      }, 10000);
-    }, { once: true });
+    // Try to autoplay sound (muted autoplay policies may block it)
+    const confettiSound = document.getElementById('confettiSound');
+    confettiSound.loop = true;
+    confettiSound.play().catch(() => {
+      console.log('Autoplay blocked: user interaction required');
+    });
 
     setTimeout(() => {
+      confettiSound.pause();
+      confettiSound.currentTime = 0;
       clearInterval(confettiInterval);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     }, 10000);
