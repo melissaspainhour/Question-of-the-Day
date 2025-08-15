@@ -136,7 +136,7 @@
 
     displayQuestion();
 
-    // Confetti Animation with Immediate Sound
+    // Confetti Animation with User Interaction Sound Trigger
     const canvas = document.getElementById('confetti');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -174,24 +174,25 @@
       });
     }
 
-    let confettiInterval = setInterval(() => {
-      drawConfetti();
-      updateConfetti();
-    }, 30);
+    function startConfettiWithSound() {
+      const confettiSound = document.getElementById('confettiSound');
+      confettiSound.loop = true;
+      confettiSound.play().catch(err => console.log('Sound blocked until click:', err));
+      let confettiInterval = setInterval(() => {
+        drawConfetti();
+        updateConfetti();
+      }, 30);
+      setTimeout(() => {
+        confettiSound.pause();
+        confettiSound.currentTime = 0;
+        clearInterval(confettiInterval);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }, 10000);
+    }
 
-    // Try to autoplay sound (muted autoplay policies may block it)
-    const confettiSound = document.getElementById('confettiSound');
-    confettiSound.loop = true;
-    confettiSound.play().catch(() => {
-      console.log('Autoplay blocked: user interaction required');
-    });
+    window.addEventListener('click', startConfettiWithSound, { once: true });
+    startConfettiWithSound(); // still try autoplay
 
-    setTimeout(() => {
-      confettiSound.pause();
-      confettiSound.currentTime = 0;
-      clearInterval(confettiInterval);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }, 10000);
   </script>
 </body>
 </html>
