@@ -100,7 +100,6 @@
     };
 
     const startDate = new Date('2025-08-14');
-    const endDate = new Date('2026-05-31');
     let currentDate = new Date();
 
     const dateElement = document.getElementById('date');
@@ -137,19 +136,19 @@
 
     displayQuestion();
 
-    // 🎉 Emoji Confetti (only one emoji per day)
+    // 🎉 Emoji Confetti (one emoji per day)
     const canvas = document.getElementById('confetti');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    const emojis = ["🎈","😎","🎉","✨","🎂","🌸","🍩","🍕","⚽","🎵","🌟","🚀","🐶","🐱","🦄","🍎","🍔","🍦","☕","🎮","📚","💡","❤️","😂","😺","🍀","🔥","🎁","🎯","🌞","🌈"];
+    const emojis = ["🎈","😎","🎉","✨","🎂","🌸","🍩","🍕","⚽","🎵","🌟","🚀","🐶","🐱","🦄","🍎","🍔","🍦","☕","🎮","📚","💡","❤️","😂","🍀","🔥","🎁","🎯","🌞","🌈"];
     let dailyEmoji = "🎉";
     let emojiPieces = [];
 
     function setDailyEmoji(date = currentDate) {
       const dayIndex = Math.floor((date - startDate) / (1000*60*60*24));
-      dailyEmoji = emojis[dayIndex % emojis.length];
+      dailyEmoji = emojis[dayIndex % emojis.length];  // pick just ONE emoji for the day
       resetEmojis();
     }
 
@@ -167,6 +166,7 @@
 
     function drawEmojis() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.font = "30px serif";
       emojiPieces.forEach(p => {
         ctx.font = `${p.size}px serif`;
         ctx.fillText(dailyEmoji, p.x, p.y);
