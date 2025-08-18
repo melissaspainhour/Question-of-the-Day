@@ -1,126 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Question of the Day</title>
-  <!-- Fun, colorful font -->
-  <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --ink:#222;
-      --paper:#fff8e7;
-      --accent:#ff6f61;
-      --accent-2:#6dd5ed;
-      --shadow:rgba(0,0,0,.15);
-    }
-
-    body{
-      margin:0;
-      min-height:100svh;
-      color:var(--ink);
-      background:linear-gradient(135deg, #ff9a9e 0%, #fad0c4 25%, #fad0c4 25%, #fbc2eb 50%, #a1c4fd 75%, #c2e9fb 100%);
-      font-family:"Nunito", sans-serif;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
-    }
-
-    .card{
-      width:min(900px, 92vw);
-      background:var(--paper);
-      border-radius:24px;
-      box-shadow:0 18px 40px var(--shadow);
-      position:relative;
-      padding:28px 28px 32px 28px;
-      border:2px solid #ffe8bb;
-    }
-
-    .title{
-      font-family:"Luckiest Guy", cursive;
-      font-size: clamp(36px, 6vw, 60px);
-      margin:0 0 4px 0;
-      letter-spacing:1px;
-      background: linear-gradient(90deg, #ff6f61, #ffcc70, #6dd5ed, #c2e9fb);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.15);
-    }
-
-    .date{
-      font-weight:700;
-      font-size: clamp(16px, 2.6vw, 22px);
-      color:#4b5563;
-      margin:2px 0 18px 2px;
-    }
-
-    .question-box{
-      background:#fffef7;
-      border:2px dashed #ffd28a;
-      border-radius:20px;
-      padding:22px 22px 26px 22px;
-      box-shadow:0 6px 0 #ffd28a, 0 12px 24px rgba(0,0,0,.08);
-    }
-
-    .question-label{
-      font-weight:800;
-      color:#ef476f;
-      text-transform:uppercase;
-      font-size:14px;
-      background:#fff;
-      padding:6px 10px;
-      border-radius:999px;
-      border:2px solid #ffd1d1;
-      margin-bottom:10px;
-      display:inline-block;
-    }
-
-    .question{
-      font-size: clamp(20px, 3.2vw, 30px);
-      line-height:1.3;
-    }
-
-    .controls{
-      margin-top:18px;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    button{
-      border:none;
-      cursor:pointer;
-      background:linear-gradient(180deg,#6ea7ff,#4d86ff);
-      color:white;
-      font-weight:800;
-      padding:10px 14px;
-      border-radius:14px;
-      box-shadow:0 8px 16px rgba(77,134,255,.35);
-      transition:transform .05s ease, box-shadow .2s ease;
-    }
-    button:hover{ transform:translateY(-1px); }
-    button:active{ transform:translateY(1px); box-shadow:0 3px 8px rgba(77,134,255,.35); }
-
-    .ghost{
-      background:#fff; color:#374151; border:2px solid #e5e7eb; box-shadow:none;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Question of the Day</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  h1 {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 3em;
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  h2 {
+    font-size: 1.5em;
+    color: #555;
+  }
+  .question {
+    font-size: 1.2em;
+    margin-top: 20px;
+  }
+  .buttons {
+    margin-top: 20px;
+  }
+  .buttons button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(to right, #36d1dc, #5b86e5);
+    color: white;
+  }
+  .surprise {
+    background: linear-gradient(to right, #ff9a9e, #fad0c4);
+    color: black;
+  }
+  iframe {
+    margin-top: 40px;
+    border: none;
+    z-index: 1;
+  }
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+</style>
 </head>
 <body>
-  <main class="card">
-    <h1 class="title">Question of the Day</h1>
-    <div class="date" id="dateText">—</div>
-    <section class="question-box">
-      <span class="question-label">Today’s Prompt</span>
-      <div class="question" id="question">Loading…</div>
-    </section>
-    <div class="controls">
-      <button id="prev">◀ Previous Day</button>
-      <button id="next">Next Day ▶</button>
-      <button id="shuffle" class="ghost">Surprise Me 🎲</button>
+  <canvas id="confetti"></canvas>
+  <div class="container">
+    <h1>Question of the Day</h1>
+    <h2 id="date"></h2>
+    <div class="question" id="question"></div>
+    <div class="buttons">
+      <button onclick="prevDay()">Previous Day</button>
+      <button class="surprise" onclick="surpriseMe()">Surprise Me!</button>
+      <button onclick="nextDay()">Next Day</button>
     </div>
-  </main>
+  </div>
+
+  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQXyWitz3HrCMKHJAaKigh_Ko0uTL0NsV4G2YdMbCVlwJn_mbjtU2Q7cJWXwRcOnRNTtZImZ5SsYPLZ/pubembed?start=false&loop=false&delayms=3000" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+
+  <script>
+    const questionsByDate = {
+      '2025-08-14': "What's your favorite snack for a movie night?",
+      '2025-08-15': "If you could meet any historical figure, who would it be?",
+      '2025-08-18': "If you could have any superpower for a day, what would it be?",
+      '2025-08-19': "What’s your favorite ice cream flavor?",
+      '2025-08-20': "If you could visit any planet, which one would you choose?",
+      '2025-08-21': "What’s the funniest thing that happened to you recently?",
+      '2025-08-22': "If you could be any animal for a day, what would you be?",
+      '2025-08-23': "What’s one food you could eat every day and never get tired of?"
+    };
+
+    const startDate = new Date('2025-08-14');
+    const endDate = new Date('2026-05-31');
+    let currentDate = new Date();
+
+    const dateElement = document.getElementById('date');
+    const questionElement = document.getElementById('question');
+
+    function formatDate(date) {
+      return date.toISOString().split('T')[0];
+    }
+
+    function displayQuestion() {
+      dateElement.textContent = currentDate.toDateString();
+      const key = formatDate(currentDate);
+      questionElement.textContent = questionsByDate[key] || "No question today.";
+    }
+
+    function prevDay() {
+      currentDate.setDate(currentDate.getDate() - 1);
+      displayQuestion();
+    }
+
+    function nextDay() {
+      currentDate.setDate(currentDate.getDate() + 1);
+      displayQuestion();
+    }
+
+    function surpriseMe() {
+      const keys = Object.keys(questionsByDate);
+      const randomKey = keys[Math.floor(Math.random() * keys.length)];
+      dateElement.textContent = new Date(randomKey).toDateString() + " (Surprise!)";
+      questionElement.textContent = questionsByDate[randomKey];
+    }
+
+    displayQuestion();
+
+    // Emoji Confetti
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const emojis = ["🎈","😎","🎉","✨","🎂","🌸","🍩","🍕","⚽","🎵","🌟","🚀","🐶","🐱","🦄","🍎","🍔","🍦","☕","🎮","📚","💡","❤️","😂","😺","🍀","🔥","🎁","🎯","🌞","🌈"];
+    const emojiPieces = [];
+
+    for (let i = 0; i < 100; i++) {
+      emojiPieces.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height - canvas.height,
+        size: Math.random() * 24 + 18,
+        emoji: emojis[Math.floor(Math.random() * emojis.length)],
+        speed: Math.random() * 2 + 1
+      });
+    }
+
+    function drawEmojis() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      emojiPieces.forEach(p => {
+        ctx.font = `${p.size}px serif`;
+        ctx.fillText(p.emoji, p.x, p.y);
+      });
+    }
+
+    function updateEmojis() {
+      emojiPieces.forEach(p => {
+        p.y += p.speed;
+        if (p.y > canvas.height) {
+          p.y = -20;
+          p.x = Math.random() * canvas.width;
+          p.emoji = emojis[Math.floor(Math.random() * emojis.length)];
+        }
+      });
+    }
+
+    setInterval(() => {
+      drawEmojis();
+      updateEmojis();
+    }, 30);
+  </script>
 </body>
 </html>
