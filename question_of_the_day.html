@@ -114,6 +114,7 @@
       dateElement.textContent = currentDate.toDateString();
       const key = formatDate(currentDate);
       questionElement.textContent = questionsByDate[key] || "No question today.";
+      setDailyEmoji();
     }
 
     function prevDay() {
@@ -131,34 +132,44 @@
       const randomKey = keys[Math.floor(Math.random() * keys.length)];
       dateElement.textContent = new Date(randomKey).toDateString() + " (Surprise!)";
       questionElement.textContent = questionsByDate[randomKey];
+      setDailyEmoji(new Date(randomKey));
     }
 
     displayQuestion();
 
-    // Emoji Confetti
+    // Emoji Confetti - one image per day
     const canvas = document.getElementById('confetti');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     const emojis = ["🎈","😎","🎉","✨","🎂","🌸","🍩","🍕","⚽","🎵","🌟","🚀","🐶","🐱","🦄","🍎","🍔","🍦","☕","🎮","📚","💡","❤️","😂","😺","🍀","🔥","🎁","🎯","🌞","🌈"];
-    const emojiPieces = [];
+    let dailyEmoji = "🎉";
 
-    for (let i = 0; i < 100; i++) {
-      emojiPieces.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height - canvas.height,
-        size: Math.random() * 24 + 18,
-        emoji: emojis[Math.floor(Math.random() * emojis.length)],
-        speed: Math.random() * 2 + 1
-      });
+    function setDailyEmoji(date = currentDate) {
+      const dayIndex = Math.floor((date - startDate) / (1000*60*60*24));
+      dailyEmoji = emojis[dayIndex % emojis.length];
+      resetEmojis();
+    }
+
+    const emojiPieces = [];
+    function resetEmojis() {
+      emojiPieces.length = 0;
+      for (let i = 0; i < 100; i++) {
+        emojiPieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 24 + 18,
+          speed: Math.random() * 2 + 1
+        });
+      }
     }
 
     function drawEmojis() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       emojiPieces.forEach(p => {
         ctx.font = `${p.size}px serif`;
-        ctx.fillText(p.emoji, p.x, p.y);
+        ctx.fillText(dailyEmoji, p.x, p.y);
       });
     }
 
@@ -168,7 +179,6 @@
         if (p.y > canvas.height) {
           p.y = -20;
           p.x = Math.random() * canvas.width;
-          p.emoji = emojis[Math.floor(Math.random() * emojis.length)];
         }
       });
     }
@@ -177,6 +187,12 @@
       drawEmojis();
       updateEmojis();
     }, 30);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      resetEmojis();
+    });
   </script>
 </body>
 </html>
