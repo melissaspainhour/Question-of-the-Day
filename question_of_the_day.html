@@ -2,168 +2,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Question of the Day</title>
+  <title>Emoji Confetti Test</title>
   <style>
     body {
       margin: 0;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
-      background: linear-gradient(135deg, #ffecd2, #fcb69f, #a1c4fd, #c2e9fb);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-      text-align: center;
+      background: #f0f0f0;
       overflow: hidden;
-    }
-    @keyframes gradientBG {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
-    }
-    h1 {
-      font-size: 3em;
-      color: #ff4081;
-      margin: 20px 0 10px;
-      text-shadow: 2px 2px #fff;
-    }
-    h2 {
-      font-size: 1.5em;
-      color: #333;
-      margin-bottom: 20px;
-    }
-    #question-box {
-      background: #fff;
-      border-radius: 20px;
-      padding: 20px;
-      width: 60%;
-      margin: 0 auto 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      font-size: 1.5em;
-      color: #444;
-      position: relative;
-      z-index: 2;
-    }
-    .buttons {
-      margin: 20px;
-      position: relative;
-      z-index: 2;
-    }
-    button {
-      background-color: #ff4081;
-      border: none;
-      border-radius: 12px;
-      color: white;
-      padding: 10px 20px;
-      margin: 5px;
-      font-size: 1em;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background-color: #e73370;
-    }
-    iframe {
-      margin-top: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      position: relative;
-      z-index: 2;
     }
     canvas {
       position: fixed;
       top: 0;
       left: 0;
       pointer-events: none;
-      z-index: 1;
     }
   </style>
 </head>
 <body>
-  <h1>Question of the Day</h1>
-  <h2 id="date"></h2>
-  <div id="question-box">
-    <p id="question">Loading...</p>
-  </div>
-  <div class="buttons">
-    <button onclick="prevDay()">Previous Day</button>
-    <button onclick="nextDay()">Next Day</button>
-    <button onclick="surpriseMe()">Surprise Me!</button>
-  </div>
-
-  <!-- Google Slideshow embed -->
-  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQXyWitz3HrCMKHJAaKigh_Ko0uTL0NsV4G2YdMbCVlwJn_mbjtU2Q7cJWXwRcOnRNTtZImZ5SsYPLZ/pubembed?start=false&loop=false&delayms=3000"
-    frameborder="0" width="960" height="569" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
-
+  <h1 style="text-align:center;">Emoji Confetti Test 🎉</h1>
   <canvas id="confetti"></canvas>
-
   <script>
-    // Questions for dates
-    const questionsByDate = {
-      '2025-08-14': "What's your favorite snack for a movie night?",
-      '2025-08-15': "If you could meet any historical figure, who would it be?",
-      '2025-08-18': "If you could have any superpower for a day, what would it be?",
-      '2025-08-19': "What’s your favorite ice cream flavor?",
-      '2025-08-20': "If you could visit any planet, which one would you choose?",
-      '2025-08-21': "What’s the funniest thing that happened to you recently?",
-      '2025-08-22': "If you could be any animal for a day, what would you be?",
-      '2025-08-23': "What’s one food you could eat every day and never get tired of?"
-    };
-
-    const startDate = new Date('2025-08-14');
-    let currentDate = new Date();
-
-    const dateElement = document.getElementById('date');
-    const questionElement = document.getElementById('question');
-
-    function formatDate(date) {
-      return date.toISOString().split('T')[0];
-    }
-
-    function displayQuestion() {
-      dateElement.textContent = currentDate.toDateString();
-      const key = formatDate(currentDate);
-      questionElement.textContent = questionsByDate[key] || "No question today.";
-      setDailyEmoji();
-    }
-
-    function prevDay() {
-      currentDate.setDate(currentDate.getDate() - 1);
-      displayQuestion();
-    }
-
-    function nextDay() {
-      currentDate.setDate(currentDate.getDate() + 1);
-      displayQuestion();
-    }
-
-    function surpriseMe() {
-      const keys = Object.keys(questionsByDate);
-      const randomKey = keys[Math.floor(Math.random() * keys.length)];
-      dateElement.textContent = new Date(randomKey).toDateString() + " (Surprise!)";
-      questionElement.textContent = questionsByDate[randomKey];
-      setDailyEmoji(new Date(randomKey));
-    }
-
-    displayQuestion();
-
-    // 🎉 Emoji Confetti (only ONE emoji per day)
-    const canvas = document.getElementById('confetti');
-    const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
     const emojis = ["🎈","😎","🎉","✨","🎂","🌸","🍩","🍕","⚽","🎵","🌟","🚀","🐶","🐱","🦄","🍎","🍔","🍦","☕","🎮","📚","💡","❤️","😂","🍀","🔥","🎁","🎯","🌞","🌈"];
-    let dailyEmoji = "🎉";
-    let emojiPieces = [];
 
-    function setDailyEmoji(date = currentDate) {
-      const dayIndex = Math.floor((date - startDate) / (1000*60*60*24));
-      dailyEmoji = emojis[dayIndex % emojis.length];  // one emoji per day
-      resetEmojis();
-    }
+    const startDate = new Date("2025-08-14");
+    let currentDate = new Date();
+    const dayIndex = Math.floor((currentDate - startDate) / (1000*60*60*24));
+    const dailyEmoji = emojis[dayIndex % emojis.length];
 
-    function resetEmojis() {
-      emojiPieces = [];
+    let pieces = [];
+    function init() {
+      pieces = [];
       for (let i = 0; i < 50; i++) {
-        emojiPieces.push({
+        pieces.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height - canvas.height,
           size: Math.random() * 28 + 20,
@@ -172,37 +46,28 @@
       }
     }
 
-    function drawEmojis() {
+    function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      emojiPieces.forEach(p => {
+      ctx.textBaseline = "top";
+      pieces.forEach(p => {
         ctx.font = `${p.size}px serif`;
         ctx.fillText(dailyEmoji, p.x, p.y);
-      });
-    }
-
-    function updateEmojis() {
-      emojiPieces.forEach(p => {
         p.y += p.speed;
         if (p.y > canvas.height) {
-          p.y = -20;
+          p.y = -p.size;
           p.x = Math.random() * canvas.width;
         }
       });
+      requestAnimationFrame(draw);
     }
 
-    function animate() {
-      drawEmojis();
-      updateEmojis();
-      requestAnimationFrame(animate);
-    }
+    init();
+    draw();
 
-    setDailyEmoji();
-    animate();
-
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      resetEmojis();
+      init();
     });
   </script>
 </body>
