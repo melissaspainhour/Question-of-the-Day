@@ -139,15 +139,15 @@
 
     function initPieces(){
       pieces = [];
-      for(let i=0;i<120;i++){
+      for(let i=0;i<150;i++){ // more pieces
         pieces.push({
           x: Math.random()*canvas.width,
           y: Math.random()*canvas.height - canvas.height,
-          size: Math.random()*24 + 18,
-          speed: Math.random()*25 + 25, // faster fall speed
+          size: Math.random()*20 + 14,
+          speed: Math.random()*60 + 60, // much faster fall speed
           angle: Math.random()*Math.PI*2,
-          spin: (Math.random()*0.5 - 0.25),
-          drift: (Math.random()*2 - 1) * 1.5 // side-to-side drift
+          spin: (Math.random()*0.8 - 0.4),
+          drift: (Math.random()*3 - 1.5) * 2 // stronger side-to-side drift
         });
       }
     }
@@ -163,9 +163,9 @@
         ctx.fillText(dailyEmoji, -p.size/2, -p.size/2);
         ctx.restore();
 
-        p.y += p.speed;
-        p.x += p.drift; // apply horizontal drift
-        p.angle += p.spin;
+        p.y += p.speed * 0.05; // scaled for smoother motion
+        p.x += p.drift * 0.5;
+        p.angle += p.spin * 0.1;
         if(p.y > canvas.height){
           p.y = -p.size;
           p.x = Math.random()*canvas.width;
