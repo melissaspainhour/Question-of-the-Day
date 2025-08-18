@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emoji Confetti Test</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f0f0f0;
+      overflow: hidden;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align:center;">Emoji Confetti Test 🎉</h1>
+  <canvas id="confetti"></canvas>
+  <script>
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const emojis = ["🎈","😎","🎉","✨","🎂","🌸","🍩","🍕","⚽","🎵","🌟","🚀","🐶","🐱","🦄","🍎","🍔","🍦","☕","🎮","📚","💡","❤️","😂","🍀","🔥","🎁","🎯","🌞","🌈"];
+
+    const startDate = new Date("2025-08-14");
+    let currentDate = new Date();
+    const dayIndex = Math.floor((currentDate - startDate) / (1000*60*60*24));
+    const dailyEmoji = emojis[dayIndex % emojis.length];
+
+    let pieces = [];
+    function init() {
+      pieces = [];
+      for (let i = 0; i < 50; i++) {
+        pieces.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height - canvas.height,
+          size: Math.random() * 28 + 20,
+          speed: Math.random() * 2 + 1
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.textBaseline = "top";
+      pieces.forEach(p => {
+        ctx.font = `${p.size}px serif`;
+        ctx.fillText(dailyEmoji, p.x, p.y);
+        p.y += p.speed;
+        if (p.y > canvas.height) {
+          p.y = -p.size;
+          p.x = Math.random() * canvas.width;
+        }
+      });
+      requestAnimationFrame(draw);
+    }
+
+    init();
+    draw();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      init();
+    });
+  </script>
+</body>
+</html>
