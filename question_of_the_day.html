@@ -38,9 +38,13 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       font-size: 1.5em;
       color: #444;
+      position: relative;
+      z-index: 2;
     }
     .buttons {
       margin: 20px;
+      position: relative;
+      z-index: 2;
     }
     button {
       background-color: #ff4081;
@@ -60,12 +64,15 @@
       margin-top: 20px;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 2;
     }
     canvas {
       position: fixed;
       top: 0;
       left: 0;
       pointer-events: none;
+      z-index: 1;
     }
   </style>
 </head>
@@ -88,6 +95,7 @@
   <canvas id="confetti"></canvas>
 
   <script>
+    // Questions for dates
     const questionsByDate = {
       '2025-08-14': "What's your favorite snack for a movie night?",
       '2025-08-15': "If you could meet any historical figure, who would it be?",
@@ -136,7 +144,7 @@
 
     displayQuestion();
 
-    // 🎉 Emoji Confetti (one emoji per day)
+    // 🎉 Emoji Confetti (only ONE emoji per day)
     const canvas = document.getElementById('confetti');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -148,17 +156,17 @@
 
     function setDailyEmoji(date = currentDate) {
       const dayIndex = Math.floor((date - startDate) / (1000*60*60*24));
-      dailyEmoji = emojis[dayIndex % emojis.length];  // pick just ONE emoji for the day
+      dailyEmoji = emojis[dayIndex % emojis.length];  // one emoji per day
       resetEmojis();
     }
 
     function resetEmojis() {
       emojiPieces = [];
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 50; i++) {
         emojiPieces.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height - canvas.height,
-          size: Math.random() * 24 + 18,
+          size: Math.random() * 28 + 20,
           speed: Math.random() * 2 + 1
         });
       }
@@ -166,7 +174,6 @@
 
     function drawEmojis() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.font = "30px serif";
       emojiPieces.forEach(p => {
         ctx.font = `${p.size}px serif`;
         ctx.fillText(dailyEmoji, p.x, p.y);
@@ -183,10 +190,14 @@
       });
     }
 
-    setInterval(() => {
+    function animate() {
       drawEmojis();
       updateEmojis();
-    }, 30);
+      requestAnimationFrame(animate);
+    }
+
+    setDailyEmoji();
+    animate();
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
