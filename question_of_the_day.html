@@ -1,74 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Emoji Confetti Test</title>
-  <style>
-    body {
-      margin: 0;
-      background: #f0f0f0;
-      overflow: hidden;
-    }
-    canvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Question of the Day</title>
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ffecd2, #fcb69f);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+  .container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-width: 800px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    z-index: 2; /* on top of confetti */
+  }
+  h1 {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-size: 3em;
+    background: linear-gradient(to right, #ff416c, #ff4b2b);
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  h2 {
+    font-size: 1.5em;
+    color: #555;
+  }
+  .question {
+    font-size: 1.2em;
+    margin-top: 20px;
+  }
+  .buttons {
+    margin-top: 20px;
+  }
+  .buttons button {
+    padding: 10px 20px;
+    margin: 5px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: linear-gradient(to right, #36d1dc, #5b86e5);
+    color: white;
+  }
+  .surprise {
+    background: linear-gradient(to right, #ff9a9e, #fad0c4);
+    color: black;
+  }
+  iframe {
+    margin-top: 40px;
+    border: none;
+    position: relative;
+    z-index: 2; /* on top of confetti */
+  }
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0; /* behind everything */
+  }
+</style>
 </head>
 <body>
-  <h1 style="text-align:center;">Emoji Confetti Test 🎉</h1>
   <canvas id="confetti"></canvas>
+  <div class="container">
+    <h1>Question of the Day</h1>
+    <h2 id="date"></h2>
+    <div class="question" id="question"></div>
+    <div class="buttons">
+      <button onclick="prevDay()">Previous Day</button>
+      <button class="surprise" onclick="surpriseMe()">Surprise Me!</button>
+      <button onclick="nextDay()">Next Day</button>
+    </div>
+  </div>
+
+  <iframe src="https://docs.google.com/presentation/d/e/2PACX-1vQXyWitz3HrCMKHJAaKigh_Ko0uTL0NsV4G2YdMbCVlwJn_mbjtU2Q7cJWXwRcOnRNTtZImZ5SsYPLZ/pubembed?start=false&loop=false&delayms=3000" width="960" height="569" allowfullscreen></iframe>
+
   <script>
-    const canvas = document.getElementById("confetti");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    /*******************
+     * Dates & Questions
+     *******************/
+    const questionsByDate = {
+      '2025-08-14': "What's your favorite snack for a movie night?",
+      '2025-08-15': "If you could meet any historical figure, who would it be?",
+      '2025-08-18': "If you could have any superpower for a day, what would it be?",
+      '2025-08-19': "What’s your favorite ice cream flavor?",
+      '2025-08-20': "If you could visit any planet, which one would you choose?",
+      '2025-08-21': "What’s the funniest thing that happened to you recently?",
+      '2025-08-22': "If you could be any animal for a day, what would you be?",
+      '2025-08-23': "What’s one food you could eat every day and never get tired of?"
+    };
 
-    const emojis = ["🎈","😎","🎉","✨","🎂","🌸","🍩","🍕","⚽","🎵","🌟","🚀","🐶","🐱","🦄","🍎","🍔","🍦","☕","🎮","📚","💡","❤️","😂","🍀","🔥","🎁","🎯","🌞","🌈"];
-
-    const startDate = new Date("2025-08-14");
+    const startDate = new Date('2025-08-14');
     let currentDate = new Date();
-    const dayIndex = Math.floor((currentDate - startDate) / (1000*60*60*24));
-    const dailyEmoji = emojis[dayIndex % emojis.length];
 
+    /*******************
+     * CONFETTI (one emoji per day, rotating)
+     *******************/
+    const canvas = document.getElementById('confetti');
+    const ctx = canvas.getContext('2d');
+
+    function sizeCanvas(){
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    sizeCanvas();
+
+    const emojis = [
+      "🎈","😎","🎉","✨","🎂","🌸","🍩","🍕","⚽","🎵",
+      "🌟","🚀","🐶","🐱","🦄","🍎","🍔","🍦","☕","🎮",
+      "📚","💡","❤️","😂","🍀","🔥","🎁","🎯","🌞","🌈"
+    ];
+
+    let dailyEmoji = "🎉";
     let pieces = [];
-    function init() {
+
+    const dayIndexFrom = (date) => Math.floor((date - startDate) / 86400000);
+
+    function setDailyEmoji(date = currentDate){
+      const idx = dayIndexFrom(date);
+      const safeIndex = ((idx % emojis.length) + emojis.length) % emojis.length;
+      dailyEmoji = emojis[safeIndex];
+      initPieces();
+    }
+
+    function initPieces(){
       pieces = [];
-      for (let i = 0; i < 50; i++) {
+      for(let i=0;i<60;i++){
         pieces.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height - canvas.height,
-          size: Math.random() * 28 + 20,
-          speed: Math.random() * 2 + 1
+          x: Math.random()*canvas.width,
+          y: Math.random()*canvas.height - canvas.height,
+          size: Math.random()*28 + 20,
+          speed: Math.random()*4 + 2, // faster fall speed
+          angle: Math.random()*Math.PI*2,
+          spin: (Math.random()*0.08 - 0.04) // faster rotation
         });
       }
     }
 
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.textBaseline = "top";
-      pieces.forEach(p => {
+    function drawConfetti(){
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.textBaseline = 'top';
+      pieces.forEach(p=>{
+        ctx.save();
+        ctx.translate(p.x + p.size/2, p.y + p.size/2);
+        ctx.rotate(p.angle);
         ctx.font = `${p.size}px serif`;
-        ctx.fillText(dailyEmoji, p.x, p.y);
+        ctx.fillText(dailyEmoji, -p.size/2, -p.size/2);
+        ctx.restore();
+
         p.y += p.speed;
-        if (p.y > canvas.height) {
+        p.angle += p.spin;
+        if(p.y > canvas.height){
           p.y = -p.size;
-          p.x = Math.random() * canvas.width;
+          p.x = Math.random()*canvas.width;
         }
       });
-      requestAnimationFrame(draw);
+      requestAnimationFrame(drawConfetti);
     }
 
-    init();
-    draw();
+    window.addEventListener('resize', ()=>{ sizeCanvas(); initPieces(); });
 
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      init();
-    });
+    setDailyEmoji(currentDate);
+    drawConfetti();
+
+    /*******************
+     * QOTD UI
+     *******************/
+    const dateElement = document.getElementById('date');
+    const questionElement = document.getElementById('question');
+
+    function formatDate(date){
+      return date.toISOString().split('T')[0];
+    }
+
+    function displayQuestion(){
+      dateElement.textContent = currentDate.toDateString();
+      const key = formatDate(currentDate);
+      questionElement.textContent = questionsByDate[key] || "No question today.";
+      setDailyEmoji(currentDate);
+    }
+
+    function prevDay(){
+      currentDate.setDate(currentDate.getDate() - 1);
+      displayQuestion();
+    }
+
+    function nextDay(){
+      currentDate.setDate(currentDate.getDate() + 1);
+      displayQuestion();
+    }
+
+    function surpriseMe(){
+      const keys = Object.keys(questionsByDate);
+      const randomKey = keys[Math.floor(Math.random() * keys.length)];
+      currentDate = new Date(randomKey);
+      displayQuestion();
+    }
+
+    displayQuestion();
   </script>
 </body>
 </html>
